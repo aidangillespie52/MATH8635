@@ -1,0 +1,142 @@
+---
+title: "Homework 1"
+author: "Aidan Gillespie"
+date: "2026-09-24"
+output: html_document
+---
+
+# Chapter 2: #1 all parts, #2 all parts, #3 all parts, #5, #6, #7 all parts, #8 all parts, #9 all parts, #10 all parts
+
+
+## Question 1
+### For each of parts (a) through (d), indicate whether we would generally expect the performance of a flexible statistical learning method to be better or worse than an inflexible method. Justify your answer.
+
+### (a) The sample size $n$ is extremely large, and the number of predictors $p$ is small.
+
+We would expect the performance a flexible model to be better because we have a lot of data and we have fewer predictors which leaves less room for overfitting. We would also be able to capture more complex relationships within the data with a more flexible model.
+
+---
+
+### (b) The number of predictors $p$ is extremely large, and the number of observations $n$ is small.
+
+We would expect the performance of a flexible model to perform worse because it is a lot more likely that it overfits to the data since the number of predictors is large and the number of observations is small. It will naturally try to curve to each of the points and will be able to do so because of low sample size.
+
+---
+
+### (c) The relationship between the predictors and response is highly non-linear.
+
+We would expect the performance of a flexible model to peform better than an inflexible model. Since the response is highly unlinear, it makes it hard for a inflexible (commonly linear) model to capture the relationship whereas a flexible model might be able to represent the curves of non linear data better.
+
+---
+
+### (d) The variance of the error terms, i.e., $\sigma^2 = \operatorname{Var}(\epsilon)$, is extremely high.
+
+We would expect the performance of a flexible model to perform worse than an inflexible model. This is due to the high variance which the model will try to fit more closely. With a linear model, we could capture the underlying relationship better before the adding \epsilon, but the flexible model would try to account for the \epsilon a lot more.
+
+
+## Question 2
+### Explain whether each scenario is a classification or regression problem, and indicate whether we are most interested in inference or prediction. Finally, provide n and p.
+
+### (a) We collect a set of data on the top 500 firms in the US. For each firm we record profit, number of employees, industry and the CEO salary. We are interested in understanding which factors affect CEO salary.
+
+This is a regression problem because we are trying to use predictors to determine a continuous variable (CEO's salary), and this is more of an inference problem because we aren't looking for the exact prediction, but rather how the predictors affect the salary.
+
+n = 500; p = 3
+
+---
+
+### (b) We are considering launching a new product and wish to know whether it will be a success or a failure. We collect data on 20 similar products that were previously launched. For each product we have recorded whether it was a success or failure, price charged for the product, marketing budget, competition price, and ten other variables.
+
+This is a classification problem, and we are looking to predict. We would like concrete probability of success not an inference on how those variables affect it.
+
+n = 20; p = 14
+
+---
+
+### (c) We are interested in predicting the % change in the USD/Euro exchange rate in relation to the weekly changes in the world stock markets. Hence we collect weekly data for all of 2012. For each week we record the % change in the USD/Euro, the % change in the US market, the % change in the British market, and the % change in the German market.
+
+This is a regression problem and we are looking to predict values. It explicitly states we are predicting % change and it's regression because it is a continous variable and not a category.
+
+n = 52; p = 4
+
+---
+
+## 3. We now revisit the bias-variance decomposition.
+
+### (a) Provide a sketch of typical (squared) bias, variance, training error, test error, and Bayes (or irreducible) error curves, on a single plot, as we go from less flexible statistical learning methods towards more flexible approaches. The x-axis should represent the amount of flexibility in the method, and the y-axis should represent the values for each curve. There should be five curves. Make sure to label each one.
+
+# ANSWER LATER
+
+---
+
+
+### (b) Explain why each of the five curves has the shape displayed in part (a).
+
+# ANSWER LATER
+
+---
+
+## 5. What are the advantages and disadvantages of a very flexible (versus a less flexible) approach for regression or classification? Under what circumstances might a more flexible approach be preferred to a less flexible approach? When might a less flexible approach be preferred?
+
+The advantages of a very flexible model over a less flexible one is that it allows you to capture more complex relationships and usually have higher accuracy assuming large n and low p. The disadvantages are that it can overfit to data and generally training time takes longer. You would want to use a more flexible approach when dealing with a large amount of data and few predictors, and you'd want to use a less flexible approach when there is a low amount of data and many predictors or the variance of \epsilon is high.
+
+---
+
+## 6. Describe the differences between a parametric and a non-parametric statistical learning approach. What are the advantages of a parametric approach to regression or classification (as opposed to a non-parametric approach)? What are its disadvantages?
+
+Parametric models take a specific form and have a fixed number of parameters, but non parametric models don't have a specific form and are more flexible to your output variable. The advantages of parametric models is they are less prone to overfit compared to non-parametric models. The advantages of non parametrics is they are very flexible and can capture more complex relationships. The disadvantages of parametric models is they can underfit due to not being able to capture as complex relationships. The disadvantages of non parametric models is they can overfit due to how flexible they are.
+
+---
+
+## 7. The table below provides a training data set containing six observations, three predictors, and one qualitative response variable.
+
+### (a) Compute the Euclidean distance between each observation and the test point, X1 = X2 = X3 = 0.
+
+```{r}
+df <- data.frame(
+	X1 = c(0,2,0,0,-1,1),
+	X2 = c(3,0,1,1,0,1),
+	X3 = c(0,0,3,2,1,1),
+	Y = c("Red", "Red", "Red", "Green", "Green", "Red")
+)
+
+euclid_dist <- function(a,b) {
+	return(sqrt(sum((a-b)^2)))
+}
+
+z = c(0,0,0)
+
+for (i in 1:nrow(df)) {
+    obs <- as.numeric(df[i, c("X1", "X2", "X3")])
+    dist <- euclid_dist(z, obs)
+    cat(obs, "->", dist, "\n")
+}
+```
+
+---
+
+### (b) What is our prediction with K = 1? Why?
+
+Our prediction would be Green because the closest value is -1 0 1 which has a Y of Green.
+
+---
+
+### (c) What is our prediction with K = 3? Why?
+
+Our prediction would be Red because the closest values are
+
+```
+-1 0 1 -> Green
+ 1 1 1 -> Red
+ 2 0 0 -> Red
+```
+
+and the majority of values are red.
+
+---
+
+### (d) If the Bayes decision boundary in this problem is highly non-linear, then whould we expect the best value for K to be large or small? Why?
+
+We would expect the best value for K to be small. This is because the larger the K value the smoother of a boundary we see because it's averaging K data points. When K is smaller it allows for much more flexibility because we're using each individual point to decide whether it is Green or Red.
+
+---
