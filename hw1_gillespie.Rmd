@@ -65,7 +65,8 @@ n = 52; p = 4
 
 ### (a) Provide a sketch of typical (squared) bias, variance, training error, test error, and Bayes (or irreducible) error curves, on a single plot, as we go from less flexible statistical learning methods towards more flexible approaches. The x-axis should represent the amount of flexibility in the method, and the y-axis should represent the values for each curve. There should be five curves. Make sure to label each one.
 
-# ANSWER LATER
+```{r}
+```
 
 ---
 
@@ -140,3 +141,237 @@ and the majority of values are red.
 We would expect the best value for K to be small. This is because the larger the K value the smoother of a boundary we see because it's averaging K data points. When K is smaller it allows for much more flexibility because we're using each individual point to decide whether it is Green or Red.
 
 ---
+
+## 8. This exercise relates to the College data set, which can be found in the file College.csv on the book website. It contains a number of variables for 777 different universities and colleges in the US. (I will not be writing out questions here just answers)
+
+### (a) load in data
+
+```{r}
+college <- read.csv("College.csv")
+```
+
+### (b)
+```{r}
+rownames(college) <- college[,1]
+View(college)
+
+college <- college[,-1]
+View(college)
+```
+
+### (c)
+```{r}
+# (i)
+summary(college)
+
+# I get an error when I try to do this because
+# X and Private are strings
+
+# (ii)
+pairs(college[,2:11])
+
+# (iii)
+# says it can't take a string variable so converting to a factor
+college$Private <- as.factor(college$Private)
+plot(Outstate ~ Private, data = college)
+
+# (iv)
+Elite <- rep("No", nrow(college))
+Elite[college$Top10perc > 50] <- "Yes"
+Elite <- as.factor(Elite)
+
+college <- data.frame(college, Elite)
+summary(college$Elite)
+plot(Outstate ~ Elite, data = college)
+
+# (v)
+par(mfrow = c(2, 2))
+
+hist(college$Apps, breaks = 5, main = "Applications", xlab = "Apps")
+hist(college$Accept, breaks = 10, main = "Acceptances", xlab = "Accept")
+hist(college$Outstate, breaks = 20, main = "Out-of-State Tuition", xlab = "Outstate")
+hist(college$Grad.Rate, breaks = 40, main = "Graduation Rate", xlab = "Grad.Rate")
+
+# note I like 20 breaks the most
+
+# (vi)
+# I like pairs, but I'd rather see pearson correlation numbers
+
+
+plot(college$Apps, college$Accept)
+college$AcceptanceRate <- (college$Accept / college$Apps) * 100
+plot(college$Apps, college$AcceptanceRate)
+
+hist(college$Outstate)
+
+plot(college$Outstate, college$Room.Board)
+
+numeric_college <- college[, sapply(college, is.numeric)]
+round(cor(numeric_college),2)
+```
+
+I have learned that college applications and college acceptances have a pretty linear relationship, and I also took a look at the apps vs acceptance rate. Which I thought would be pretty negatively correlated because I figured people trying to get into the best schools would have a lot of applications but not a lot of acceptances; however it doesn't have as strong as a negative correlation as I thought it would. I also learned that room and board and out of state have a string positive correlation which makes sense.
+
+## 9. This exercise involves the Auto data set studied in the lab. Make sure that the missing values have been removed from the data
+
+### (a)
+```{r}
+cars <- read.csv("Auto.csv")
+summary(cars)
+```
+
+The quantitative variables are mpg, cylinders, displacement, horsepower, weight, acceleration, year
+
+The qualitative variables are origin and name.
+
+### (b)
+```{r}
+range(cars$mpg) 
+range(cars$cylinders) 
+range(cars$displacement) 
+range(cars$horsepower) # this shows as strings for some reason???
+range(cars$weight) 
+range(cars$acceleration) 
+range(cars$year)
+```
+
+### (c)
+```{r}
+
+mean(cars$mpg); sd(cars$mpg)  
+mean(cars$cylinders); sd(cars$cylinders)  
+mean(cars$displacement); sd(cars$displacement)  
+mean(cars$horsepower); sd(cars$horsepower)
+mean(cars$weight); sd(cars$weight)  
+mean(cars$acceleration); sd(cars$acceleration)  
+mean(cars$year); sd(cars$year)
+```
+
+### (d)
+```{r}
+cars_rm <- cars[-c(10:85)]
+
+range(cars_rm$mpg); mean(cars_rm$mpg); sd(cars_rm$mpg)  
+range(cars_rm$cylinders); mean(cars_rm$cylinders); sd(cars_rm$cylinders)  
+range(cars_rm$displacement); mean(cars_rm$displacement); sd(cars_rm$displacement)  
+range(cars_rm$horsepower); mean(cars_rm$horsepower); sd(cars_rm$horsepower)
+range(cars_rm$weight); mean(cars_rm$weight); sd(cars_rm$weight)  
+range(cars_rm$acceleration); mean(cars_rm$acceleration); sd(cars_rm$acceleration)  
+range(cars_rm$year); mean(cars_rm$year); sd(cars_rm$year)
+```
+
+### (e)
+```{r}
+cars_numeric <- cars[, c(
+  "mpg", "cylinders", "displacement", 
+  "weight", "acceleration", "year"
+)]
+
+round(cor(cars_numeric), 2)
+plot(cars$displacement, cars$weight)
+plot(cars$weight, cars$mpg)
+```
+
+It seems that displacement and weight have a very positive correlation while weight and mpg have a very negative correlation.
+
+### (f)
+
+I would justify that weight, displacement, and cylinders are best predictors. Since they have a strong negative correlation we should be able to say the lower those are the higher our mpg will be. My correlation matrix shows this.
+
+## 10.
+
+### (a)
+```{r}
+library(ISLR2)
+# ?Boston tired of this printing out everytime I compile
+```
+
+This dataset has 506 rows and 13 cols.
+crim -> crime per capita
+
+‘crim’-> per capita crime rate by town.
+‘zn’-> proportion of residential land zoned for lots over 25,000
+‘indus’-> proportion of non-retail business acres per town.
+‘chas’-> Charles River dummy variable (= 1 if tract bounds river; 0
+‘nox’-> nitrogen oxides concentration (parts per 10 million).
+‘rm’-> average number of rooms per dwelling.
+‘age’-> proportion of owner-occupied units built prior to 1940.
+‘dis’-> weighted mean of distances to five Boston employment centres.
+‘rad’-> index of accessibility to radial highways.
+‘tax’-> full-value property-tax rate per $10,000.
+‘ptratio’-> pupil-teacher ratio by town.
+‘lstat’-> lower status of the population (percent).
+‘medv’-> median value of owner-occupied homes in $1000s.
+
+### (b).
+
+```{r}
+pairs(Boston)
+```
+
+Crime and age seem to be positively correlated which makes sense but its showing like people in their 40s to 80s comitting a lot more crime than I would expect. The lower of the median value of the home it seems more crime is more likely. This one is kinda obvious but the number of rooms per dwelling correlates with the median value of the home.
+
+### (c).
+
+The predictors associated with per captia crime seem to be age, distance to the employment centers and median home value.
+
+Age -> Positively correlated the older you are the more likely the per captia crime is higher.
+Distance to employment center -> closer you are to employment center more likely there is higher crime per capita there.
+Median home value -> the lower the value of the home the higher the crime per capita.
+
+### (d)
+
+```{r}
+range(Boston$crim)
+range(Boston$tax)
+range(Boston$ptratio)
+```
+
+The crime rate ranges from 0.00632 to 88.9762, which suggests that some census tracts have high crime rates. Tax rates range from 187 to 711 which is a large difference in tax rates between census tracts. Pupil-teacher ratios range from 12.6 to 22.0 which seems pretty tame compared to the than the crime rates.
+
+### (e) & (f)
+
+```{r}
+sum(Boston$chas == 1)
+median(Boston$ptratio)
+```
+
+35 census tracts bound the Charles river, and the median pupil-teacher ratio is 19.05.
+
+### (g)
+
+```{r}
+min(Boston$medv)
+Boston[Boston$medv == min(Boston$medv), ]
+summary(Boston)
+```
+
+The tract that is lowest is 399 and 406. 
+
+‘crim’-> much higher than avg
+‘zn’-> close to median and equal to avg
+‘indus’-> slightly higher than median and mean
+‘chas’-> close to median and mean
+‘nox’-> in the 3rd quartile
+‘rm’-> lower than median and mean
+‘age’-> equal to the max
+‘dis’-> much lower than mean and median in bottom 25%
+‘rad’-> equal to the max
+‘tax’-> in the upper 3rd
+‘ptratio’-> in the upper 3rd
+‘lstat’-> very close to the max
+‘medv’-> equal to the min
+
+It seems the homes are very old because many units built before 1940. They are very far from highways, and are very crime ridden. Seems like an abandoned building?
+
+### (h)
+
+```{r}
+sum(Boston$rm > 7)
+sum(Boston$rm > 8)
+Boston[Boston$rm > 8, ]
+```
+
+All of these with more than 8 rooms per dwelling seem pretty old with low tax rate.
+
+
